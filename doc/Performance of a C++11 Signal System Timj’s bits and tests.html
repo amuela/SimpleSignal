@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Performance of a C++11 Signal System | Timj’s bits and tests</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link href="Performance%20of%20a%20C++11%20Signal%20System%20Timj%E2%80%99s%20bits%20and%20tests_files/nirvi.css" rel="stylesheet">
+  <style>
+    figure       { text-align: center; }
+    figcaption   { color: #555; }
+    a            { color: #2066bb; }
+    a:visited    { color: #2866bb; }
+    .text-center { text-align: center; }
+  </style>
+  <!-- link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet"/> -->
+  <meta name="keywords" content="C++, C++11, Signals">
+  <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+  <meta name="DC.modified" content="2023-02-02">
+  <meta name="DC.date.issued" content="2013-01-25">
+  <meta name="citation_publication_date" content="2013/01/25">
+  <meta name="citation_title" content="Performance of a C++11 Signal System">
+  <meta name="DC.title" content="Performance of a C++11 Signal System">
+  <meta name="citation_author" content="Tim Janik">
+  <meta name="DC.creator" content="Tim Janik">
+  <style>
+    #sitenav {
+      text-align: center;
+      font-family: "IBM Plex Sans", sans-serif;
+    }
+    #sitenav span { font-weight: bolder; padding: 0 0.3em; }
+    #sitenav span:hover { background-color: #eef; border-radius: 3px; }
+    IGNORE #sitenav a { color: inherit; }
+    IGNORE #sitenav a { color: #333; }
+    #sitenav .sitehome {  }
+  </style>
+<link href="data:text/css,%3Ais(%5Bid*%3D'google_ads_iframe'%5D%2C%5Bid*%3D'taboola-'%5D%2C.taboolaHeight%2C.taboola-placeholder%2C%23credential_picker_container%2C%23credentials-picker-container%2C%23credential_picker_iframe%2C%5Bid*%3D'google-one-tap-iframe'%5D%2C%23google-one-tap-popup-container%2C.google-one-tap-modal-div%2C%23amp_floatingAdDiv%2C%23ez-content-blocker-container%2C%23notify-adblock)%20%7Bdisplay%3Anone!important%3Bmin-height%3A0!important%3Bheight%3A0!important%3B%7D" rel="stylesheet" type="text/css"></head>
+<body class="page-cpp11-signal-system-performance post">
+
+<div id="sitehead" style="-x-background-color:#ff8; max-width: 45em;
+	    display: flex;
+	    justify-content: space-between;
+	    align-items: center;
+	    ">
+  <style>
+    #sitehead 			{ margin: 0 auto; padding: 0 15px; font-family: sans; }
+    #sitehead #sitelogo a	{ font-size: 300%; font-weight: bolder; font-style: italic; }
+    #sitehead #sitelogo a	{ color: #313ca1; text-shadow: 3px 3px 1px rgba(49,60,161,0.3); text-decoration: none; }
+    #sitehead #sitelogo a:focus	{ outline: none; }
+    #sitehead #siteprojects,
+    #sitehead #sitenavlinks	{ font-weight: bolder; }
+    #sitehead #sitenavlinks span + span	{ margin-left: 0.8em; }
+  </style>
+  <div id="sitelogo">
+    <a href="https://testbit.eu/" rel="home"><span style="font-size: 120%; letter-spacing: -0.1em;">T</span>estbit</a>
+  </div>
+  <div id="siteprojects">
+    <span><a href="https://testbit.eu/projects">Projects</a></span>
+    <!-- <span><a href="https://beast.testbit.org" target="_blank">Beast</a></span> -->
+  </div>
+  <div id="sitenavlinks">
+    <!-- <span><a href="tops.html">TOPs</a></span> -->
+    <span><a href="https://testbit.eu/timj" title="Contact">Contact</a></span>
+    <span><a href="https://social.tchncs.de/@timj" rel="me" title="@timj (Mastodon)" target="_blank">@timj</a></span>
+    <span><a href="https://www.google.com/search?q=site:https://testbit.eu/" target="_blank">Search</a></span>
+  </div>
+</div>
+
+<div id="header">
+  <h1>Performance of a C++11 Signal System</h1>
+</div>
+
+<div id="content">
+  <div class="imageblock text-center">
+<div class="content">
+<img alt="{Cxx11-Signals}" src="Performance%20of%20a%20C++11%20Signal%20System%20Timj%E2%80%99s%20bits%20and%20tests_files/Cxx11Signals.png">
+</div>
+</div>
+<div class="paragraph">
+<p>First, a quick intro for for the uninitiated, <a href="https://en.wikipedia.org/wiki/Signals_and_slots" rel="noopener" target="_blank">signals</a>
+ in this context are structures that maintain a lists of callback 
+functions with arbitrary arguments and assorted reentrant machinery to 
+modify the callback lists and calling the callbacks.
+These allow customization of object behavior in response to signal 
+emissions by the object (i.e. notifying the callbacks by means of 
+invocations).</p>
+</div>
+<div class="paragraph">
+<p>Over the years, I have rewritten each of GtkSignal, GSignal and 
+Rapicorn::Signal at least once, but most of that is long a time ago, 
+some more than a decade.
+With the advent of lambdas, template argument lists and std::function in
+ C++11, it became time for me to dive into rewriting a signal system 
+once again.</p>
+</div>
+<div class="paragraph">
+<p>So for the task at hand, which is mainly to update the Rapicorn 
+signal system to something that fits in nicely with C++11, I’ve settled 
+on the most common signal system requirements:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Signals need to support arbitrary argument lists.</p>
+</li>
+<li>
+<p>Signals need to provide single-threaded reentrancy, i.e. it must be 
+possible to connect and disconnect signal handlers and re-emit a signal 
+while it is being emitted in the same thread. This one is absolutely 
+crucial for any kind of callback list invocation that’s meant to be 
+remotely reliable.</p>
+</li>
+<li>
+<p>Signals should support non-void return values (of little importance in Rapicorn but widely used elsewhere).</p>
+</li>
+<li>
+<p>Signals can have return values, so they should support collectors 
+(i.e. GSignal accumulators or boost::signal combiners) that control 
+which handlers are called and what is returned from the emission.</p>
+</li>
+<li>
+<p>Signals should have only moderate memory impact on class instances, 
+because at runtime many instances that support signal emissions will 
+actually have 0 handlers connected.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For me, the result is pretty impressive.
+With C++11 a simple signal system that fullfils all of the above 
+requirements can be implemented in less than 300 lines in a few hours, 
+without the need to resort to any preprocessor magic, scripted code 
+generation or libffi.</p>
+</div>
+<div class="paragraph">
+<p>I say "simple", because over the years I’ve come to realize that many
+ of the bells and whistles as implemented in GSignal or boost::signal2 
+don’t matter much in my practical day to day programming, such as the 
+abilities to block specific signal handlers, automated tracking of 
+signal handler argument lifetimes, emissions details, restarts, 
+cancellations, cross-thread emissions, etc.</p>
+</div>
+<div class="paragraph">
+<p>Beyond the simplicity that C++11 allows, it’s of course the 
+performance that is most interesting.
+The old Rapicorn signal system (C++03) comes with its own set of 
+callback wrappers named "slot" which support between 0 and 16 arguments,
+ this is essentially mimicking std::function. The new C++11 
+std::function implementation in contrast is opaque to me, and supports 
+an unlimited number of arguments, so I was especially curious to see the
+ performance of a signal system based on it.</p>
+</div>
+<div class="paragraph">
+<p>I wrote a simple benchmark that just measures the times for a large 
+number of signal emissions with negligible time spent in the actual 
+handler.</p>
+</div>
+<div class="paragraph">
+<p>I.e. the signal handler just does a simple uint64_t addition and 
+returns. While the scope of this benchmark is clearly very limited, it 
+serves quite well to give an impression of the overhead associated with 
+the emission of a signal system, which is the most common performance 
+relevant aspect in practical use.</p>
+</div>
+<div class="paragraph">
+<p>Without further ado, here are the results of the time spent per 
+emission (less is better) and memory overhead for an unconnected signal 
+(less is better):</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 30%;">
+<col style="width: 13.3333%;">
+<col style="width: 26.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Signal System</th>
+<th class="tableblock halign-left valign-top">Emit() in nanoseconds</th>
+<th class="tableblock halign-left valign-top">Static Overhead</th>
+<th class="tableblock halign-left valign-top">Dynamic Overhead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GLib GSignal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">341.156931ns</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rapicorn::Signal, old</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">178.595930ns</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">64</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boost::signal2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">92.143549ns</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">24</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">400 (=265+7+8*16)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boost::signal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">62.679386ns</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">40</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">392 (=296+6*16)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Simple::Signal, C++11</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8.599794ns</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Plain Callback</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.878826ns</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Here, "Plain Callback" indicates the time spent on the actual 
+workload, i.e. without any signal system overhead, all measured on an 
+Intel Core i7 at 2.8GHz. Considering the workload, the performance of 
+the C++11 Signals is probably close to ideal, I’m more than happy with 
+its performance.
+I’m also severely impressed with the speed that std::function allows 
+for, I was originally expecting it to be at least a magnitude larger.</p>
+</div>
+<div class="paragraph">
+<p>The memory overhead gives accounts on a 64bit platform for a signal 
+with 0 connections after its constructor has been called.
+The "static overhead" is what’s usually embedded in a C++ instance, the 
+"dynamic overhead" is what the embedded signal allocates with operator 
+new in its constructor (the size calculations correspond to effective 
+heap usage, including malloc boundary marks).</p>
+</div>
+<div class="paragraph">
+<p>The reason GLib’s GSignal has 0 static and 0 dynamic overhead is that
+ it keeps track of signals and handlers in a hash table and sorted 
+arrays, which only consume memory per (instance, signal, handler) 
+triplet, i.e. instances without any signal handlers really have 0 
+overall memory impact.</p>
+</div>
+<div class="paragraph">
+<p>Summary:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If you need inbuilt thread safety plus other bells and can spare lots of memory per signal, boost::signal2 is the best choice.</p>
+</li>
+<li>
+<p>For tight scenarios without any spare byte per instance, GSignal will treat your memory best.</p>
+</li>
+<li>
+<p>If you just need raw emission speed and can spare the extra whistles, the C++11 single-file simplesignal.cc excels.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For the interested, the brief C++11 signal system implementation can be found here:
+<a href="http://testbit.eu/~timj/blogstuff/simplesignal.cc" rel="noopener" target="_blank">simplesignal.cc</a><br>
+The API docs for the version that went into Rapicorn are available here:
+<a href="https://github.com/tim-janik/rapicorn/blob/master/rcore/aidasignal.hh" rel="noopener" target="_blank">aidasignal.hh</a></p>
+</div>
+<div class="paragraph">
+<p>PS: In retrospect I need to add, this day and age, the better 
+trade-off for Glib could be one or two pointers consumed per instance 
+and signal, if those allowed emission optimizations by a factor of 3 to 
+5.
+However, given its complexity and number of wrapping layers involved, 
+this might be hard to accomplish.</p>
+</div>
+
+<div class="commentsect">
+<div style="text-align:right; font-family: sans">
+  <a href="mailto:newcomment+97WTG9U@testbit.eu?subject=Add%20comment%20to%20/2013/cpp11-signal-system-performance&amp;body=Add%20comment%20to%20/2013/cpp11-signal-system-performance:%0a%0a" title="Send comment to publish via email, the email address itself is not published">Post comment via email</a></div>
+<div class="title"><br><big><b>Comments:</b></big></div>
+<div class="commentlist">
+<div class="comment">
+
+<div class="sect1">
+  <h3 id="_20180815013535-Leira_Hua">
+    <span class="commentdate">2018-08-15</span>
+    <span class="commenttile">Leira Hua </span>
+  </h3>
+  <div class="sectionbody">
+    <div class="commentblock">
+      <div class="content commentbody">
+        <pre class="highlight"><code class="language-markdown hljs" data-lang="markdown">Nice implementation~! I learned a lot from your code. Some one put your
+code on GitHub, it is easier to read the code there.
+
+I have a question, why did you used a handmade linked list/ring, rather
+than using std::list? And why manually manage reference count, rather than
+use std::shared_ptr? Is there any specific reason you made that decision?
+
+I tried to replace the linked list with std::list, and reference count with
+std::shared_ptr, in this pull request
+https://github.com/larspensjo/SimpleSignal/pull/4. Surprisingly it ran with
+even better performance on my Mac:
+
+<span class="hljs-quote">&gt; ./test.list</span>
+Signal/Basic Tests: OK
+Signal/CollectorVector: OK
+Signal/CollectorUntil0: OK
+Signal/CollectorWhile0: OK
+Signal/Benchmark: Simple::Signal: OK
+  Benchmark: Simple::Signal: 4.695005ns per emission (size=24): OK
+Signal/Benchmark: callback loop: OK
+  Benchmark: callback loop: 0.001000ns per round: OK
+
+Compare to the original implementation:
+
+<span class="hljs-quote">&gt; ./test.master</span>
+Signal/Basic Tests: OK
+Signal/CollectorVector: OK
+Signal/CollectorUntil0: OK
+Signal/CollectorWhile0: OK
+Signal/Benchmark: Simple::Signal: OK
+  Benchmark: Simple::Signal: 22.417022ns per emission (size=8): OK
+Signal/Benchmark: callback loop: OK
+  Benchmark: callback loop: 0.014000ns per round: OK</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+<div id="footer">
+  <small>Last updated 2023-02-02 20:50:57 UTC</small>
+  <div id="footerlinks">
+    <span><a href="https://testbit.eu/atom.xml">Feed</a></span>
+    <span><a href="https://testbit.eu/impressum" title="Impressum">Impressum</a></span>
+    <style>
+      #footerlinks span + span { margin-left: 2em; }
+    </style>
+  </div>
+</div>
+
+
+
+<link rel="stylesheet" href="Performance%20of%20a%20C++11%20Signal%20System%20Timj%E2%80%99s%20bits%20and%20tests_files/github.min.css">
+<script src="Performance%20of%20a%20C++11%20Signal%20System%20Timj%E2%80%99s%20bits%20and%20tests_files/highlight.min.js"></script>
+<script>hljs.initHighlighting()</script>
+
+</body></html>

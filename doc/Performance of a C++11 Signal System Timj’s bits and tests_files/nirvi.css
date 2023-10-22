@@ -1,0 +1,364 @@
+@charset "UTF-8";
+/* == Font setup == */
+/* $seriffont: 100% CharisSILW; $sansfont: 93% 'Fira Sans'; $monofont: 93% 'Fira Mono'; $monostrong: 92%; */
+/* $seriffont: 100% CharisSILW; $sansfont: 93% 'Open Sans'; $monofont: 93% 'Oxygen Mono'; $monostrong: 92%; */
+@import url(https://fonts.googleapis.com/css?family=IBM+Plex+Sans);
+@import url(https://fonts.googleapis.com/css?family=IBM+Plex+Serif);
+@import url(https://fonts.googleapis.com/css?family=IBM+Plex+Mono);
+/** Include Webfont CSS settings for font-family, line-height and font-size */
+html { text-rendering: optimizeLegibility; font-kerning: normal; font-variant-numeric: tabular-nums slashed-zero; font-variant-ligatures: common-ligatures; }
+
+.sans { font-family: "IBM Plex Sans", sans-serif; line-height: 1.45; }
+
+.serif { font-family: "IBM Plex Serif", serif; line-height: 1.4; }
+
+.mono { font-family: "IBM Plex Mono", monospace; line-height: 1.4; }
+
+/* TODO: - adjust x-height - style block quotes - fix inner headings, see #gof - adjust admonition colors - adjust strings in syntax highlighting - style footer - #header h1 needs different border - .lead - @media print */
+/* == Common Selectors == */
+/* == Headings Sizes == */
+/* == Layout Helpers == */
+/* == Force Line Break == */
+/* == Effects == */
+/* use midtone to work on black and white */
+/* == Fonts and Settings == */
+/* vertical margin around tables */
+/* == Common Selectors == */
+/* == Headings Sizes == */
+/* == Layout Helpers == */
+/* == Force Line Break == */
+/* == Effects == */
+/* use midtone to work on black and white */
+#header, #content, #footer { margin-left: auto; margin-right: auto; }
+@media not print { #header, #content, #footer { max-width: 42em; } }
+
+#content { padding-left: 2rem; }
+#content h1, #content h2 { margin-left: -1rem; }
+
+#header { padding-left: 2rem; }
+#header h1 { margin-left: -1.5rem; }
+#header h1 + .details { margin: -1em 0 2.5em 0rem; }
+
+/* == Asciidoc page == */
+html { font-size: 1.0625em; }
+
+body { font-family: "IBM Plex Serif", serif; line-height: 1.4; font-size: 1rem; color: #000; }
+
+tt, code, kbd, samp, pre, listing, xmp, plaintext { word-wrap: break-word; font-family: "IBM Plex Mono", monospace; line-height: 1.4; font-size: 1rem; }
+@media not print { tt, code, kbd, samp, pre, listing, xmp, plaintext { hyphens: auto; word-break: normal; overflow-wrap: break-word; } }
+tt strong, tt b, code strong, code b, kbd strong, kbd b, samp strong, samp b, pre strong, pre b, listing strong, listing b, xmp strong, xmp b, plaintext strong, plaintext b { font-size: inherit; }
+
+pre, listing, xmp, plaintext { white-space: pre-wrap; }
+
+p, div { word-wrap: break-word; }
+@media not print { p, div { hyphens: auto; word-break: normal; overflow-wrap: break-word; } }
+
+/* == Asciidoc headings == */
+h1, h2, h3, h4, h5, h6, .title { font-family: "IBM Plex Sans", sans-serif; line-height: 1.45; font-size: 1rem; font-weight: bolder; font-weight: bolder; }
+
+h1 { font-family: "IBM Plex Sans", sans-serif; line-height: 1.45; font-size: 1rem; font-weight: bolder; -x-font-variant: small-caps; }
+
+h1 { font-size: 210%; }
+
+h2 { font-size: 137.5%; }
+
+h3 { font-size: 125%; }
+
+h4 { font-size: 118.75%; }
+
+h5 { font-size: 112.5%; }
+
+h6 { font-size: 106.25%; }
+
+h1, h2 { margin: 2em 0 1em 0rem; padding-top: 0.5rem; border-top: 2px solid #aaa; }
+
+h3, h4 { margin: 2em 0 0.5em 0rem; padding-top: 0.5rem; }
+
+h5, h6 { margin: 1.4em 0 0.3rem 0rem; }
+
+.title { margin: 1.4rem 0 0.4rem 0; font-size: 100.00%; }
+
+#content div .content { margin: 1rem 0 1rem 0; }
+#content .imageblock .content { margin: 1rem 0 0 0; }
+#content .imageblock { margin-bottom: 1rem; }
+#content div .content div.title, #content .imageblock div.title { color: #666; margin: 0; font-weight: unset; font-family: unset; font-style: italic; }
+
+/* == Paragraphs == */
+#preamble .paragraph.lead { font-size: 106.25%; }
+
+p { margin: 0 0 1rem 0; }
+
+/* == Asciidoc header/footer == */
+#header h1 { text-align: left; border-top: none; margin-top: 1em; border-top: none; }
+#header #revnumber { display: inline-block; }
+#header #revnumber::first-letter { text-transform: uppercase; }
+#header .details { display: block; text-align: left; font-style: italic; /* force break between .author and #revnumber */ }
+#header .details span.author { font-weight: bold; font-style: normal; }
+#header .details span.author + br { display: none; }
+#header .details br + span.author::before { content: "\22c5 \00a0"; }
+#header .details span:not(.author) { font-size: 90%; }
+#header .details span.author + br + span:not(.author)::before { content: "\A"; white-space: pre; font-size: 0; }
+
+#footer { margin: 2em auto 1em; max-width: 42em; color: #777; font-family: "IBM Plex Sans", sans-serif; line-height: 1.45; font-size: 0.85rem; text-align: center; }
+
+/* == Asciidoc listings and examples == */
+xmp, pre, plaintext { margin: 1rem 0 1rem 0; }
+
+.literalblock pre, .listingblock pre { padding-left: 0.5em; border-left: 2px dotted #ddd; }
+.literalblock pre code, .listingblock pre code { font-size: 94.1%; }
+
+.exampleblock.result { background: #fff; /* need opaque background */ position: relative; /* need position to allow stacking of pseudo-elements */ padding: 1em; margin: 0 11px 12px 0; /* second sheet */ /* third sheet */ margin-bottom: 1.5em; }
+.exampleblock.result { background-color: #fff; border: 1px solid #ddd; border-radius: 0; }
+.exampleblock.result::before, .exampleblock.result::after { content: ""; position: absolute; width: 100%; height: 100%; box-sizing: border-box; background-color: #ededed; border: 2px solid #ddd; }
+.exampleblock.result::before { left: 7px; top: 6px; z-index: -1; }
+.exampleblock.result::after { left: 12px; top: 11px; z-index: -2; }
+@media screen2 { .exampleblock.result { box-shadow: 2px 1px 1px 0px rgba(0, 0, 0, 0.15); border-radius: 0; } }
+
+/* == Asciidoc TOC == */
+#header #toc h1, #header #toc h2, #header #toc h3, #header #toc h4, #header #toc h5, #header #toc h6, #content #toc h1, #content #toc h2, #content #toc h3, #content #toc h4, #content #toc h5, #content #toc h6 { margin-top: 0; padding-top: 0; border: none; }
+#header #toc a:hover, #content #toc a:hover { text-decoration: underline; }
+#header #toc ul, #content #toc ul { display: flex; flex-wrap: wrap; }
+#header #toc ul > li, #content #toc ul > li { flex: 1 0 49.5%; }
+@media (max-width: 35em) { #header #toc ul > li, #content #toc ul > li { flex-basis: 100%; } }
+#header #toc, #content #toc { border: none; margin: 1em 0 1em; padding: 0; background: inherit; color: inherit; }
+#header #toctitle, #content #toctitle { font-size: 137.5%; }
+
+/* == Asciidoc sidebarblock == */
+.sidebarblock { margin: 2em 0; padding: 0.5em 1em; background: #f8f8f8; border: 1px solid #dfdfdf; border-radius: 3px; }
+
+/* == Asciidoc admonitionblock == */
+.admonitionblock { margin: 0.5em 0; }
+.admonitionblock > table { border-collapse: separate; border-spacing: 0; }
+.admonitionblock td.icon { vertical-align: middle; padding: 0.5em 1em 0.5em 0; border-right: 1px solid #ddd; }
+.admonitionblock td.icon .icon-caution::before { content: "\f06d"; color: #b40; }
+.admonitionblock td.icon .icon-important::before { content: "\f06a"; color: #b00; }
+.admonitionblock td.icon .icon-note::before { content: "\f05a"; color: #48b; }
+.admonitionblock td.icon .icon-tip::before { content: "\f0eb"; color: #bb0; }
+.admonitionblock td.icon .icon-warning::before { content: "\f071"; color: #b80; }
+.admonitionblock td.icon .icon-caution, .admonitionblock td.icon .icon-important, .admonitionblock td.icon .icon-note, .admonitionblock td.icon .icon-tip, .admonitionblock td.icon .icon-warning { font-size: 2em; width: 0.8em; text-align: center; }
+@media print { .admonitionblock td.icon .icon-caution::before, .admonitionblock td.icon .icon-important::before, .admonitionblock td.icon .icon-note::before, .admonitionblock td.icon .icon-tip::before, .admonitionblock td.icon .icon-warning::before { color: #bbb; } }
+.admonitionblock td.icon + td { padding-left: 1em; }
+
+/* == Links and anchors == */
+a { word-wrap: break-word; text-decoration: none; color: #114488; }
+@media not print { a { hyphens: auto; word-break: normal; overflow-wrap: break-word; } }
+a:visited { color: #0b2d59; }
+a:hover { text-decoration: underline; text-decoration-style: dotted; }
+@media screen { a #content[href^="HTTP" i] { color: #3366bb; }
+  a #content[href^="HTTP" i]:visited { color: #4a2587; } }
+@media print { a[href] { color: inherit; }
+  a[href]::after { font-size: 0.8em; font-weight: normal; content: " (" attr(href) ")"; } }
+
+@media not print { #content h1[id], #content h2[id], #content h3[id], #content h4[id], #content h5[id], #content h6[id], #content .title[id] { position: relative; }
+  #content h1[id] a.anchor:first-child::after, #content h2[id] a.anchor:first-child::after, #content h3[id] a.anchor:first-child::after, #content h4[id] a.anchor:first-child::after, #content h5[id] a.anchor:first-child::after, #content h6[id] a.anchor:first-child::after, #content .title[id] a.anchor:first-child::after { position: absolute; left: -1em; color: transparent; content: "# \00a0 \00a0 "; /* use spaces to 1em gap around '#' */ transition: color 0.3s ease, visibility 0.3s; visibility: hidden; }
+  #content h1[id]:hover a.anchor:first-child::after, #content h2[id]:hover a.anchor:first-child::after, #content h3[id]:hover a.anchor:first-child::after, #content h4[id]:hover a.anchor:first-child::after, #content h5[id]:hover a.anchor:first-child::after, #content h6[id]:hover a.anchor:first-child::after, #content .title[id]:hover a.anchor:first-child::after { color: #777; visibility: visible; } }
+@media print { #content h1[id] a.anchor:first-child, #content h2[id] a.anchor:first-child, #content h3[id] a.anchor:first-child, #content h4[id] a.anchor:first-child, #content h5[id] a.anchor:first-child, #content h6[id] a.anchor:first-child, #content .title[id] a.anchor:first-child { display: none; } }
+
+/* == Horizontal rule == */
+hr { position: relative; height: 1px; padding: 0.7em; max-width: 17em; margin: .5em auto; border: none; overflow: visible; /* For IE */ }
+hr::before, hr::after { height: 1em; border-radius: 1em; border-style: solid; border-color: #aaa; display: block; position: relative; content: ""; }
+hr::before { border-width: 0 0 1px 0; top: -1em; }
+hr::after { border-width: 1px 0 0 0; bottom: 1em; /* bottom: calc(1em + 1px); */ }
+
+/* == Lists == */
+ul, ol, dl, dt { margin: 0.5em 0 0.5em 0; }
+
+dl > dt { margin: 0.33em 0 0 0; font-weight: bolder; }
+dl > dt:first-of-type { margin-top: 0; }
+
+dl > dd { margin: 0 0 0.33em 1.5em; }
+dl > dd:last-of-type { margin-bottom: 0; }
+dl > dd p:first-of-type { margin-top: 0; }
+dl > dd p:last-of-type { margin-bottom: 0; }
+
+ul { padding-left: 1.5em; }
+
+ol { padding-left: 1.25em; }
+ol > li { padding-left: 0.25em; }
+
+/* see also: https://www.w3.org/Style/Examples/007/color-bullets.en.html */
+li { margin-top: 0.33em; margin-bottom: 0.33em; }
+li > p:first-of-type { margin-top: 0; }
+li > p:last-of-type { margin-bottom: 0; }
+
+ul ul, ul ol, ul dl, ol ul, ol ol, ol dl, dl ul, dl ol, dl dl { margin-left: 1.5em; }
+
+@media (min-resolution: 1dpi) { ul { list-style-type: none; }
+  ul ul ul ul ul ul ul > li:before, ul ul ul ul ul > li:before, ul ul ul > li:before, ul > li:before { content: "⦿"; width: 1.35em; font-size: 100%; line-height: 1.5; margin: 0 0 0 -1.35em; }
+  ul ul ul ul ul ul ul ul > li:before, ul ul ul ul ul ul > li:before, ul ul ul ul > li:before, ul ul > li:before { content: "⦾"; width: 1.35em; font-size: 100%; line-height: 1.5; margin: 0 0 0 -1.35em; }
+  ul > li:before { display: inline-block; padding: 0; text-align: left; float: left; font-weight: normal; color: inherit; }
+  ul.none, ol.none, ul.no-bullet, ol.no-bullet, ul.unstyled, ol.unstyled, ul.checklist, ol.unnumbered, #toc ul { list-style-position: inside; list-style-type: unset; }
+  ul.none > li, ol.none > li, ul.no-bullet > li, ol.no-bullet > li, ul.unstyled > li, ol.unstyled > li, ul.checklist > li, ol.unnumbered > li, #toc ul > li { padding-left: 0; }
+  ul.none > li:before, ol.none > li:before, ul.no-bullet > li:before, ol.no-bullet > li:before, ul.unstyled > li:before, ol.unstyled > li:before, ul.checklist > li:before, ol.unnumbered > li:before, #toc ul > li:before { display: none; } }
+/* == Horizontal Definition Lists == */
+.hdlist > table { margin: 0 0 1rem 0; background: none; border: 0; }
+.hdlist > table > tbody > tr { background: none; border: 0; }
+.hdlist > table td.hdlist1, .hdlist > table td.hdlist2 { vertical-align: top; }
+.hdlist > table td.hdlist1 p, .hdlist > table td.hdlist2 p { margin: 0; }
+.hdlist > table td.hdlist1 { font-weight: bolder; }
+.hdlist > table td.hdlist2 { padding-left: 0.9rem; }
+
+/* == Tables == */
+table.tableblock { margin: 1rem 0 1rem 0; border-collapse: collapse; }
+table.tableblock.spread { width: 100%; }
+table.tableblock thead { font-weight: bolder; }
+table.tableblock td > p.tableblock:first-of-type { margin-top: 0; }
+table.tableblock td > p.tableblock:last-of-type { margin-bottom: 0; }
+table.tableblock tr th, table.tableblock tr:not(:last-child) td { border-bottom: 1px solid #aaa; }
+
+.tableblock th.halign-left, .tableblock td.halign-left { text-align: left; }
+.tableblock th.halign-right, .tableblock td.halign-right { text-align: right; }
+.tableblock th.halign-center, .tableblock td.halign-center { text-align: center; }
+.tableblock th.valign-top, .tableblock td.valign-top { vertical-align: top; }
+.tableblock th.valign-bottom, .tableblock td.valign-bottom { vertical-align: bottom; }
+.tableblock th.valign-middle, .tableblock td.valign-middle { vertical-align: middle; }
+
+/* prevent horizontal scrolling */
+#content table { table-layout: fixed; }
+#content table, #content table thead, #content table tbody, #content table caption, #content table th, #content table td { word-wrap: break-word; }
+@media not print { #content table, #content table thead, #content table tbody, #content table caption, #content table th, #content table td { hyphens: auto; word-break: normal; overflow-wrap: break-word; } }
+
+/* == Callout Numbers == */
+/* @media print - make callouts printable by default, see: https://github.com/asciidoctor/asciidoctor/issues/2782 */
+/* font reduction to fit bg for 2 digit cases */
+/* outline growth, but avoid touching neigbourhs */
+.conum[data-value] { font-family: "IBM Plex Sans", sans-serif; line-height: 1.45; font-size: 1rem; font-weight: bold; }
+.conum[data-value]::after { @print-grey; background-color: transparent; content: "<" attr(data-value) ">"; }
+.conum[data-value] + b { display: none; }
+.colist .conum[data-value] { margin-right: 1rem; }
+
+@media screen { .conum[data-value] { font-size: 0.85rem; font-style: normal; text-align: center; margin: 0 0.1em 0 0; }
+  .conum[data-value]::after { content: attr(data-value); display: inline-block; width: 1em; height: 1em; line-height: 1; /* fixate square size */ margin: -2em 0; /* use negative margins to allow overlapping with the next line */ border-radius: 100% !important; padding: 0.2em; background-color: #00c !important; color: #ff0 !important; } }
+/* == Blockquote == */
+blockquote { margin: 1em; }
+
+.quoteblock { font-family: "IBM Plex Serif", serif; line-height: 1.4; font-size: 1rem; font-style: italic; }
+.quoteblock blockquote { font-size: 106.25%; border-left: 3px solid #ccc; padding-left: 1em; }
+.quoteblock .attribution { font-size: 95%; color: #777; text-align: right; margin: 0.5em 0.5em 0 0; }
+.quoteblock blockquote + .attribution { margin-top: -1em; margin-bottom: 1em; }
+
+/* == Comments (Mailbox.py) == */
+.commentsect .commentblock .content pre code { font-size: 85%; }
+.commentsect .commentblock .content pre code, .commentsect .commentblock .content pre code.hljs { background: inherit; }
+.commentsect .commentlist h2, .commentsect .commentlist h3 { border-top: 2px solid #aaa; display: block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: baseline; }
+.commentsect .commentlist h2 .commentdate, .commentsect .commentlist h3 .commentdate { font-size: 90%; float: right; color: #42424d; }
+.commentsect .commentlist h2 .commenttitle, .commentsect .commentlist h3 .commenttitle { display: block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.commentsect .commentlist .comment:first-child h2, .commentsect .commentlist .comment:first-child h3 { margin-top: 1rem; }
+
+/* == AsciiDoc UI Macros == */
+kbd { display: inline-block; background: #f8f8f8; border-radius: 3px; border: 1px solid #eaeaea; font-family: "IBM Plex Sans", sans-serif; line-height: 1.45; font-size: 1rem; white-space: nowrap; box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 0.1em white inset; margin: 0.1em 0.15em; padding: 0.2em 0.5em; font-size: 0.8em; vertical-align: baseline; }
+
+/* == AsciiDoc user roles == */
+div.unbreakable { page-break-inside: avoid; }
+
+.big { font-size: larger; }
+
+.small { font-size: smaller; }
+
+.underline { text-decoration: underline; }
+
+.overline { text-decoration: overline; }
+
+.line-through { text-decoration: line-through; }
+
+.aqua { color: #00bfbf; }
+
+.aqua-background { background-color: #00fafa; }
+
+.black { color: black; }
+
+.black-background { background-color: black; }
+
+.blue { color: #0000bf; }
+
+.blue-background { background-color: #0000fa; }
+
+.fuchsia { color: #bf00bf; }
+
+.fuchsia-background { background-color: #fa00fa; }
+
+.gray { color: #606060; }
+
+.gray-background { background-color: #7d7d7d; }
+
+.green { color: #006000; }
+
+.green-background { background-color: #007d00; }
+
+.lime { color: #00bf00; }
+
+.lime-background { background-color: #00fa00; }
+
+.maroon { color: #600000; }
+
+.maroon-background { background-color: #7d0000; }
+
+.navy { color: #000060; }
+
+.navy-background { background-color: #00007d; }
+
+.olive { color: #606000; }
+
+.olive-background { background-color: #7d7d00; }
+
+.purple { color: #600060; }
+
+.purple-background { background-color: #7d007d; }
+
+.red { color: #bf0000; }
+
+.red-background { background-color: #fa0000; }
+
+.silver { color: #909090; }
+
+.silver-background { background-color: #bcbcbc; }
+
+.teal { color: #006060; }
+
+.teal-background { background-color: #007d7d; }
+
+.white { color: #bfbfbf; }
+
+.white-background { background-color: #fafafa; }
+
+.yellow { color: #bfbf00; }
+
+.yellow-background { background-color: #fafa00; }
+
+/* == Print setup == */
+.print-only { display: none; }
+
+@media print { @page { margin: 1.0cm 1.5cm 1.6cm 1cm; }
+  html { margin: 0; padding: 0; font-size: 10pt; }
+  body { margin: 0; padding: 0; }
+  * { color: #000 !important; background: transparent !important; box-shadow: none !important; text-shadow: none !important; }
+  svg, img { max-width: 100% !important; }
+  #toc, .sidebarblock, .exampleblock > .content { background: none !important; }
+  .hide-on-print, .hide-for-print { display: none !important; }
+  .print-only { display: block !important; }
+  .show-for-print { display: inherit !important; } }
+h2, h3, #toctitle, .sidebarblock > .content > .title, blockquote, td.content, .listingblock, .exampleblock, .sect1, p, dl, dt, dd { orphans: 3; widows: 3; }
+
+dt { page-break-after: avoid; }
+
+dd { page-break-before: avoid; }
+
+pre, tr, img, object, svg, .admonitionblock, blockquote { page-break-inside: avoid; }
+
+.exampleblock, .listingblock, dl, .dlist, .sect1 { page-break-inside: avoid; }
+
+/* workaround for broken { break-after: avoid } */
+h2, h3, h4, h5, h6, #toctitle, .title { page-break-after: avoid; }
+
+.sectionbody:first-of-type { page-break-before: avoid; }
+
+/* == highlightjs overrides == */
+body pre.highlightjs { padding-left: 0; }
+body pre.highlightjs code { display: block; /* needed for proper padding */ }
+body pre.highlightjs code, body .hljs { padding: 0.25em 0.5em; }
+body .hljs { color: #000; background: #fafaff; }
+body .hljs-comment, body .hljs-quote { color: #c00; }
+body .hljs-keyword, body .hljs-selector-tag, body .hljs-subst { color: #000; }
+body .hljs-string { color: #808; }
+
+/*# sourceMappingURL=nirvi.css.map */
